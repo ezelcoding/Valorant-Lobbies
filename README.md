@@ -1,2 +1,3 @@
-# Valorant-Lobbies
-Valorant Lobby Finder and Creator
+# Valorant Lobbies
+
+Live site → https://ezelcoding.github.io/valorant-lobbies
