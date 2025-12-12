@@ -19,7 +19,14 @@ type Rank =
   | "Immortal"
   | "Radiant";
 
-type GameMode = "Competitive" | "Unrated" | "Spike Rush" | "Deathmatch";
+type GameMode =
+  | "Competitive"
+  | "Unrated"
+  | "Spike Rush"
+  | "Swiftplay"
+  | "Replication"
+  | "Escalation"
+  | "Deathmatch";
 
 type AgeOption = "all" | "18+";
 
@@ -52,7 +59,15 @@ const RANKS: Rank[] = [
   "Radiant",
 ];
 
-const MODES: GameMode[] = ["Competitive", "Unrated", "Spike Rush", "Deathmatch"];
+const MODES: GameMode[] = [
+  "Competitive",
+  "Unrated",
+  "Spike Rush",
+  "Swiftplay",
+  "Replication",
+  "Escalation",
+  "Deathmatch",
+];
 
 function normalizeRank(rank: string | null | undefined): Rank {
   const cleaned = (rank ?? "").trim().toLowerCase();
@@ -402,7 +417,7 @@ export default function ValorantLobbies() {
                 }))
               }
             >
-              {RANKS.map((r) => (
+              {RANKS.filter((r) => r !== "Radiant").map((r) => (
                 <option key={r} value={r}>
                   {r}
                 </option>
@@ -414,7 +429,7 @@ export default function ValorantLobbies() {
               onChange={(e) => setForm((f) => ({ ...f, rankMax: e.target.value as Rank | "Only" }))}
             >
               <option value="Only">Only</option>
-              {RANKS.map((r) => (
+              {RANKS.filter((r) => r !== "Radiant").map((r) => (
                 <option key={r} value={r}>
                   {r}
                 </option>
@@ -430,25 +445,48 @@ export default function ValorantLobbies() {
             ))}
           </select>
 
-          <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <input
-              type="checkbox"
-              checked={form.micRequired}
-              onChange={(e) => setForm((f) => ({ ...f, micRequired: e.target.checked }))}
-            />
-            Mic required
-          </label>
+          <button
+            type="button"
+            onClick={() => setForm((f) => ({ ...f, micRequired: !f.micRequired }))}
+            className="glass glass-sm"
+            style={{
+              borderRadius: 12,
+              padding: "8px 12px",
+              cursor: "pointer",
+              border: "none",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 6,
+              fontWeight: form.micRequired ? 600 : 500,
+            }}
+            title={form.micRequired ? "Mic required" : "Mic optional"}
+          >
+            {form.micRequired ? <Mic size={16} /> : <MicOff size={16} />}
+            {form.micRequired ? "Mic" : "No Mic"}
+          </button>
 
-          <select value={form.age} onChange={(e) => setForm((f) => ({ ...f, age: e.target.value as AgeOption }))}>
-            <option value="all">All ages</option>
-            <option value="18+">18+</option>
-          </select>
+          <button
+            type="button"
+            onClick={() => setForm((f) => ({ ...f, age: f.age === "all" ? "18+" : "all" }))}
+            className="glass glass-sm"
+            style={{
+              borderRadius: 12,
+              padding: "8px 12px",
+              cursor: "pointer",
+              border: "none",
+              fontWeight: 500,
+            }}
+            title={form.age === "all" ? "All ages" : "18+ only"}
+          >
+            {form.age === "all" ? "All Ages" : "18+ Only"}
+          </button>
 
           <select
             value={form.spotsAvailable}
             onChange={(e) => setForm((f) => ({ ...f, spotsAvailable: Number(e.target.value) }))}
           >
-            {[1, 2, 3, 4, 5].map((n) => (
+            {[1, 2, 3, 4].map((n) => (
               <option key={n} value={n}>
                 {n} {n === 1 ? "spot" : "spots"}
               </option>
